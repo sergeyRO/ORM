@@ -25,6 +25,19 @@ for item in data:
     session.add(model(id=item.get('pk'), **item.get('fields')))
 session.commit()
 
-print(session.query(Publisher).filter(Publisher.id == input('Введите ID издателя: ')).first())
+publisher_id = input('Введите ID издателя: ')
+print(session.query(Publisher).filter(Publisher.id == publisher_id).first())
+
+# добавьте запрос выборки магазинов, где продаются книги целевого издателя
+shop_publisher = session.query(Shop, Shop.id, Shop.name)\
+    .join(Stock, Shop.id == Stock.id_shop)\
+    .join(Book,Stock.id_book == Book.id)\
+    .filter(Book.id_publisher == publisher_id, ).all()
+if len(shop_publisher) != 0:
+    print(f'Магазины в которых продаются книги издателя с ID={publisher_id}')
+    for item in shop_publisher:
+        print(f'ID: {item[1]} ===> Наименование: {item[2]}')
+else:
+    print('Нет ни одного магазина')
 
 session.close()
