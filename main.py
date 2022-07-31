@@ -1,10 +1,14 @@
 import json
-
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from model import create_tables, Book, Publisher, Stock, Sale, Shop
+from dotenv import dotenv_values
 
-DSN = "postgresql://postgres:password@localhost:5432/ORM_DB"
+for item in dotenv_values().items():
+    if item[0] == 'DSN':
+        DSN = item[1]
+        break
+
 engine = sqlalchemy.create_engine(DSN)
 
 create_tables(engine)
